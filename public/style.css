@@ -1,0 +1,401 @@
+/* General Style */
+* {
+    padding: 0;
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    box-sizing: border-box;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-drag: none;
+}
+
+
+/* Main Stuff */
+html {
+    background-color: bisque;
+}
+
+main {
+    width: 80%;
+    height: 50%;
+    max-width: 50rem;
+    min-width: 30rem;
+    min-height: 30rem;
+    max-height: 50rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgb(243, 243, 243);
+    transform: translate(-50%, -50%);
+    border-radius: 30px;
+}
+
+i {
+    font-size: 2em;
+    color: #916e5f;
+}
+
+strong {
+    color: red;
+}
+
+
+/* Search + Filter Button */
+.search {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    gap: 10px;
+}
+
+.search-box {
+    flex: 1;
+    height: 35px;
+    border-radius: 20px;
+    border: none;
+    box-shadow: #b3b3b3 0 0 20px 0;
+    text-align: center;
+    padding: 5px;
+    outline: none;
+    font-size: 20px;
+    transition: all ease-in-out 0.3s;
+    cursor: none;
+}
+
+.search-box:hover {
+    box-shadow: #919191 0 0 20px 0;
+    cursor: pointer;
+    height: 40px;
+}
+
+.search-button {
+    width: 35px;
+    height: 35px;
+    border-radius: 50px;
+    border: none;
+    box-shadow: #b3b3b3 0 0 20px 0;
+    background-color: #ffffff;
+    transition: all ease-in-out 0.3s;
+}
+
+.search-button:hover {
+    box-shadow: #919191 0 0 20px 0;
+    cursor: pointer;
+    width: 40px;
+    height: 40px;
+}
+
+
+/* Task Container + Task Cards */
+.container {
+    position: absolute;
+    display: block;
+    width: 100%;
+    height: 73%;
+    padding: 20px;
+    padding-top: 0;
+    text-align: center;
+    overflow: scroll;
+    scrollbar-width: none;
+}
+
+.container::-webkit-scrollbar { display: none; }
+
+.task {
+    position: relative;
+    background-color: white;
+    width: 100%;
+    border-radius: 15px;
+    padding: 10px;
+    margin-bottom: 10px;
+    box-shadow: #dadada 0 0 10px 0;
+    z-index: 10;
+    transition: all ease-in-out 0.3s;
+    text-align: left;
+}
+
+.task-card {
+    display: flex;
+    flex-direction: row;
+    position: relative;
+    transition: all ease-in-out 0.3s;
+}
+
+.task-card:hover .task {
+    width: 80%;
+    border-radius: 15px 0 0 15px;
+}
+
+.task-buttons {
+    position: absolute;
+    display: flex;
+    flex-direction: row;
+    right: 0;
+    height: 88%;
+    width: 20%;
+}
+
+.task-button {
+    height: 100%;
+    width: 100%;
+}
+
+.task-button-r { border-radius: 0 20px 20px 0; }
+
+.edit-button {
+    background-color: #ffbb00;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.delete-button {
+    background-color: #ff5858;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+#add-task-button {
+    position: absolute;
+    width: 80%;
+    bottom: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    height: 35px;
+    border-radius: 50px;
+    border: none;
+    box-shadow: #b3b3b3 0 0 20px 0;
+    background-color: #ffffff;
+    transition: all ease-in-out 0.3s;
+}
+
+#add-task-button:hover {
+    box-shadow: #919191 0 0 20px 0;
+    cursor: pointer;
+    width: 90%;
+    height: 35px;
+}
+/* Styles for the task content itself */
+
+.task-title {
+    color: #916e5f;
+    font-weight: bold;
+    font-size: 1.25rem;
+}
+
+.task-description {
+    color: #947b70;
+}
+
+.overdue {
+    background-color: #ffe8e8;
+}
+
+/* Styles for different statues, progresses, priorities etc. for the tasks. */
+.task {
+    --todo:                     #ff0000;
+    --inprogress:               #ffc400;
+    --completed:                #5dcc31;
+
+    --low-priority:             #ffffff;
+    --medium-priority:          #fcce6a;
+    --high-priority:            #ffb7b7;
+
+    --low-priority-contrast:    #ffffff;
+    --medium-priority-contrast: #ffae00;
+    --high-priority-contrast:   #ff7070;
+}
+
+/* 
+.priority-low    { border: solid 2px var(--low-priority);    }
+.priority-medium { border: solid 2px var(--medium-priority); }
+.priority-high   { border: solid 2px var(--high-priority);   }
+*/
+
+.priority-text-low    { color: var(--low-priority);    -webkit-text-stroke: 1px var(--low-priority-contrast);    }
+.priority-text-medium { color: var(--medium-priority); -webkit-text-stroke: 1px var(--medium-priority-contrast); }
+.priority-text-high   { color: var(--high-priority);   -webkit-text-stroke: 1px var(--high-priority-contrast);   }
+
+.status-todo       { border: solid 1px var(--todo);       border-left: solid 5px var(--todo);       }
+.status-inprogress { border: solid 1px var(--inprogress); border-left: solid 5px var(--inprogress); }
+.status-completed  { border: solid 1px var(--completed);  border-left: solid 5px var(--completed);  }
+
+.todo-text         { color: var(--todo);       }
+.inprogress-text   { color: var(--inprogress); }
+.completed-text    { color: var(--completed);  }
+
+.status-text {
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.priority-text {
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    letter-spacing: 1px;
+}
+
+#no-tasks-found {
+    color: #916e5f;
+    font-size: 1rem;
+}
+
+/* Overlay and Filter Popup */
+.overlay {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    background-color: #000000aa;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    transition: all 0.2s ease-in-out;
+    opacity: 1;
+}
+
+.overlay.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.popup {
+    width: 20%;
+    height: 50%;
+    max-width: 20rem;
+    min-width: 15rem;
+    min-height: 25rem;
+    max-height: 60rem;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    background-color: rgb(243, 243, 243);
+    transform: translate(-50%, -50%);
+    border-radius: 10px;
+    padding: 15px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+}
+
+.new-task-popup {
+    min-height: 28rem;
+}
+
+.title {
+    color: #916e5f;
+}
+
+.filter-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: initial;
+    padding: 30px 0;
+}
+
+.create-task-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    position: initial;
+    padding: 10px 0;
+}
+
+.big-apply-button {
+    height: 30px;
+    width: 75%;
+    border-radius: 50px;
+    border: none;
+    box-shadow: #b3b3b3 0 0 20px 0;
+    background-color: #ffffff;
+    left: 50%;
+    position: absolute;
+    bottom: 15px;
+    transform: translateX(-50%);
+    transition: all ease-in-out 0.3s;
+}
+
+.big-apply-button:hover {
+    box-shadow: #919191 0 0 20px 0;
+    cursor: pointer;
+    width: 85%;
+    height: 35px;
+}
+
+#cancel-add-new-task-button {
+    bottom: 60px;
+}
+
+.filter-select {
+    width: 100%;
+    margin: 10px 0;
+    height: 80px;
+    border-radius: 10px;
+    padding: 5px 10px;
+    outline: none;
+    border: 1px solid #cccccc;
+    background-color: #ffffff;
+    font-size: 14px;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.filter-box {
+    width: 100%;
+}
+
+/* Message boxes at the top */
+.msgboxcontainer {
+    position: fixed;
+    width: 100%;
+    top: 10px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+    z-index: 20;
+}
+
+.msgbox {
+    --error-contrast-color:     #d82c2b;
+    --error-background-color:   #f2bab9;
+
+    --success-contrast-color:   #47976c;
+    --success-background-color: #d9f2d8;
+}
+
+.msgbox {
+    align-self: center;
+
+    /* Error colors */
+    border-radius: 5px;
+    padding: 10px;
+    width: 90%;
+    max-width: 70rem;
+    transition: all 0.6s ease-in-out;
+}
+
+.msgbox.hidden {
+    opacity: 0;
+}
+
+.msgbox.error {
+    color: var(--error-contrast-color);
+    background-color: var(--error-background-color);
+    border: solid 2px var(--error-contrast-color);
+}
+
+.msgbox.success {
+    color: var(--success-contrast-color);
+    background-color: var(--success-background-color);
+    border: solid 2px var(--success-contrast-color);
+}

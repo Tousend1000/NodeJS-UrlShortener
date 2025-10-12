@@ -1,0 +1,36 @@
+{
+  "name": "to-do-list",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "ts-node src/index.ts",
+    "start:dev": "ts-node-dev src/index.ts",
+    "start:prod": "node dist/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/connect-livereload": "^0.6.3",
+    "@types/ejs": "^3.1.5",
+    "@types/express": "^5.0.3",
+    "@types/livereload": "^0.9.5",
+    "@types/node": "^24.7.0",
+    "@types/pg": "^8.15.5",
+    "typescript": "^5.9.3"
+  },
+  "dependencies": {
+    "@types/dotenv": "^6.1.1",
+    "body-parser": "^2.2.0",
+    "dotenv": "^17.2.3",
+    "ejs": "^3.1.10",
+    "express": "^5.1.0",
+    "express-rate-limit": "^8.1.0",
+    "pg": "^8.16.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0"
+  }
+}
