@@ -5,7 +5,7 @@ import { saveShortenedLink } from "../../services/dbService";
 
 const router: Router = Router();
 
-router.get('/shorten', async (req: Request, res: Response): Promise<void> => {
+router.post('/shorten', async (req: Request, res: Response): Promise<void> => {
     const data = req.body as Partial<ShortenedLink>;
 
     if (!['alias', 'redirectUrl'].every(key => key in data)) {
@@ -25,8 +25,14 @@ router.get('/shorten', async (req: Request, res: Response): Promise<void> => {
         return;
     }
 
-    const trackingCode = await saveShortenedLink(shortenedLink);
-    
+    let trackingCode: string;
+    try {
+        trackingCode = await saveShortenedLink(shortenedLink);
+    } catch (error) {
+        res.status(400).json({ success: false, error: 'A shortened link with the current alias already exists.' })
+        return;
+    }
+
     res.status(200).json({ success: true, trackingCode: trackingCode });
 });
 
