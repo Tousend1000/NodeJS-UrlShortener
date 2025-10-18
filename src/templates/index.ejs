@@ -10,6 +10,10 @@
 </head>
 
 <body>
+    <div class="msgboxcontainer">
+        <div class="msgbox hidden" id="default-msgbox" hidden></div>
+    </div>
+
     <main>
         <h1 class="title-top">URL Shortener</h1>
         <div class="navigation">
@@ -32,11 +36,15 @@
                 <div class="container-page page3" id="container-page3">
                     <h2 class="title">Done</h2>
                     <div class="inputs">
-                        <p class="description">You have successfully shortened your URL. You can now access it under the following link:</p>
-                        <h2 class="final-link selectable"><span class="current-url selectable"></span></h2>
+                        <p class="description two">You have successfully shortened your URL. You can now access it under the following link:</p>
+                        <h2 class="final-link selectable">
+                            <span class="current-url"></span><span id="final-alias"></span>
+                        </h2>
                         <hr>
-                        <p class="description">If you wish to track your shortened URLs visits, visit</p>
-                        <h3 class="tracking-link selectable"><span class="current-url selectable"></span></h3>
+                        <p class="description two">If you wish to track your shortened URLs visits, visit</p>
+                        <h3 class="tracking-link selectable">
+                            <span class="current-url"></span>track/<span id="tracking-code"></span>
+                        </h3>
                     </div>
                 </div>
             </div>
