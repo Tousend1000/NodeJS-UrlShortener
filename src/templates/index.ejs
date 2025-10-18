@@ -1,138 +1,51 @@
-<% 
-
-function capitalize(text) {
-    if (!text) return '';
-    return text.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
-
-function format(date) {
-    const formatted = `${date.getFullYear()}-${String(date.getMonth()+1).padStart(2,'0')}-${String(date.getDate()).padStart(2,'0')} at ${String(date.getHours()).padStart(2,'0')}:${String(date.getMinutes()).padStart(2,'0')}:${String(date.getSeconds()).padStart(2,'0')}`;
-    return formatted;
-}
-
-%>
-
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>To-Do List</title>
 
-        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.1/css/all.css" integrity="sha384-O8whS3fhG2OnA5Kas0Y9l3cfpmYjapjI0E4theH4iuMD+pLhbf6JI0jIMfYcK3yZ" crossorigin="anonymous">
+    <link rel="stylesheet" href="/static/style.css">
+</head>
 
-        <link rel="stylesheet" href="/static/style.css">
-    </head>
-    <body>
-        <script defer src="https://use.fontawesome.com/releases/v5.1.1/js/all.js" integrity="sha384-BtvRZcyfv4r0x/phJt9Y9HhnN5ur1Z+kZbKVgzVBAlQZX4jvAuImlIz+bG7TS00a" crossorigin="anonymous"></script>
-
-        <div class="msgboxcontainer">
-            <div class="msgbox hidden" id="default-msgbox" hidden></div>
-        </div>
-
-        <main>
-            <div class="search">
-                <input type="text" class="search-box" placeholder="Search for a task..." id="task-search-box">
-                <button class="search-button" id="filter-button"><i class="fas fa-filter"></i></button>
-                <button class="search-button" id="sort-button"><i class="fas fa-signal"></i></button>
-                <button class="search-button" id="reverse-button"><i class="fas fa-sort"></i></button>
-            </div>
+<body>
+    <main>
+        <h1 class="title-top">URL Shortener</h1>
+        <div class="navigation">
+            <button class="navigator-arrow btn-l btn-disabled" id="btn-left" disabled><i class="fas fa-arrow-left "></i></button>
             <div class="container">
-                <div class="tasks" id="tasks">
-                    <% if (tasks.length > 0) { %>
-                        <% for (const task of tasks) { %>
-                            <div class="task-card">
-                                <div class="task priority-<%= task.priority %> status-<%= task.status_raw %><%= (task.due && (new Date() - new Date(Number(task.due)) > 0)) ? ' overdue' : '' %>" 
-                                    id="<%= task.id %>">
-
-                                    <p class="priority-text priority-text-<%= task.priority %>" <%= task.priority == 'low' ? 'hidden' : '' %> id="priority"><%= capitalize(task.priority) %> Priority</p>
-                                    <p class="status-text <%= task.status_raw %>-text" id="status"><%= capitalize(task.status) %></p>
-
-                                    <p class="task-title" id="title"><%= task.title %></p>
-                                    <hr>
-                                    <p class="task-description"><%= task.description %></p>
-                                    <% if (task.due) { %>
-                                        <p class="task-description">Due before <%= format(new Date(Number(task.due))) %> <strong><%= new Date() - new Date(Number(task.due)) > 0 ? ' - OVERDUE' : '' %></strong></p>
-                                    <% } %>
-                                </div>
-                                <div class="task-buttons">
-                                    <button class="task-button edit-button" id="<%= task.id %>">
-                                        <i class="fas fa-edit"></i>
-                                    </button>
-                                    <button class="task-button delete-button task-button-r" id="<%= task.id %>">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        <% } %>
-                    <% } %>
-                </div>
-                <p id="no-tasks-found" <%= tasks.length === 0 ? '' : 'hidden' %>>No tasks found.</p>
-            </div>
-            <button id="add-task-button">Add New Task</button>
-        </main>
-
-        <div class="overlay hidden" id="overlay-filter">
-            <div class="popup filter-popup" id="filter-popup">
-                <h1 class="title">Filter</h1>
-                <hr>
-                <div class="filter-content">
-                    <div class="filter-box">
-                        <h2 class="task-title">Priority</h2>
-                        <select class="filter-select" id="filter-priority-select" multiple>
-                            <option value="any">Any Priority</option>
-                            <option value="low">Low Priority</option>
-                            <option value="medium">Medium Priority</option>
-                            <option value="high">High Priority</option>
-                        </select>
-                    </div>
-                    <div class="filter-box">
-                        <h2 class="task-title">Status</h2>
-                        <select class="filter-select" id="filter-status-select" multiple>
-                            <option value="any">Any Status</option>
-                            <option value="todo">To Do</option>
-                            <option value="inprogress">In Progress</option>
-                            <option value="completed">Completed</option>
-                        </select>
+                <div class="container-page page1" id="container-page1">
+                    <h2 class="title">Enter URL</h2>
+                    <div class="inputs">
+                        <p class="description">Enter the URL you wish to shorten:</p>
+                        <input type="text" class="url-input" id="url-input" placeholder="https://www.google.com/" maxlength="1024"/>
                     </div>
                 </div>
-                <button id="apply-filter" class="big-apply-button">Apply Filter</button>
-            </div>
-        </div>
-
-        <div class="overlay hidden" id="overlay-new-task">
-            <div class="popup new-task-popup" id="add-new-task-popup">
-                <h1 class="title">Add New Task</h1>
-                <hr>
-                <form id="create-new-task-form">
-                    <div class="create-task-content">
-
-
-                        <h2 class="task-title">Title<strong>*</strong></h2>
-                        <input type="text" class="create-task-input" placeholder="Task Title" id="create-task-title-input" required />
-
-                        <h2 class="task-title">Description<strong>*</strong></h2>
-                        <input type="text" class="create-task-input" placeholder="Task Description" id="create-task-description-input" required />
-
-                        <h2 class="task-title">Priority<strong>*</strong></h2>
-                        <select id="create-task-priority-select" required>
-                            <option value="" disabled selected>Please select</option>
-                            <option value="low">Low</option>
-                            <option value="medium">Medium</option>
-                            <option value="high">High</option>
-                        </select>
-
-                        <h2 class="task-title">Due</h2>
-                        <input type="datetime-local" placeholder="Please enter a time" id="create-task-datetime-input"/>
+                <div class="container-page page2" id="container-page2">
+                    <h2 class="title">Enter Alias</h2>
+                    <div class="inputs">
+                        <p class="description">Enter a custom alias you wish to assign the URL:</p>
+                        <span class="current-url invis-input-url"></span><input type="text" placeholder="abc" class="invisible-input" id="alias-input" maxlength="32" />
                     </div>
-
-                    <button class="big-apply-button" id="cancel-add-new-task-button" type="reset">Cancel</button>
-                    <button class="big-apply-button" id="confirm-add-new-task-button" type="submit">Add New Task</button>
-                </form>
+                </div>
+                <div class="container-page page3" id="container-page3">
+                    <h2 class="title">Done</h2>
+                    <div class="inputs">
+                        <p class="description">You have successfully shortened your URL. You can now access it under the following link:</p>
+                        <h2 class="final-link selectable"><span class="current-url selectable"></span></h2>
+                        <hr>
+                        <p class="description">If you wish to track your shortened URLs visits, visit</p>
+                        <h3 class="tracking-link selectable"><span class="current-url selectable"></span></h3>
+                    </div>
+                </div>
             </div>
+            <button class="navigator-arrow btn-r btn-disabled" id="btn-right" disabled><i class="fas fa-arrow-right"></i></button>
         </div>
+    </main>
+</body>
 
-    </body>
+<script defer src="https://use.fontawesome.com/releases/v5.1.1/js/all.js" integrity="sha384-BtvRZcyfv4r0x/phJt9Y9HhnN5ur1Z+kZbKVgzVBAlQZX4jvAuImlIz+bG7TS00a" crossorigin="anonymous"></script>
+<script defer src="/static/script.js"></script>
 
-    <script src="/static/script.js"></script>
 </html>

@@ -1,27 +1,4 @@
-const statuses = ['to do', 'in progress', 'completed'];
-const allTaskButtons = new Map();
-
-const priorityWeights = {
-    low: 1,
-    medium: 2,
-    high: 3
-};
-
-const statusWeights = {
-    'to do': 1,
-    'in progress': 2,
-    'completed': 3
-};
-
-const sortingTypes = ['name', 'priority', 'status'];
-
-let currentSortingType = 'name';
-let reversedSorting = false;
-
-function capitalize(text) {
-    if (!text) return '';
-    return text.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
-}
+let currentPage = 1;
 
 function showMessage(message, type, duration) {
     if (!type) type = 'success';
@@ -45,389 +22,154 @@ function showMessage(message, type, duration) {
     }, duration*1000);
 }
 
-function checkIfSearched(taskCard) {
-    const searchBox = document.getElementById('task-search-box');
+function switchToPage(page) {
+    const page1 = document.getElementById('container-page1');
+    const page2 = document.getElementById('container-page2');
+    const page3 = document.getElementById('container-page3');
 
-    const entry = searchBox.value.toLowerCase();
+    const buttonRight = document.getElementById('btn-right');
+    const buttonLeft = document.getElementById('btn-left');
     
-    const title = taskCard.getElementsByClassName('task-title')[0].innerHTML.toLowerCase();
-    const description = taskCard.getElementsByClassName('task-description')[0].innerHTML.toLowerCase();
+    const urlInput = document.getElementById('url-input');
+    const aliasInput = document.getElementById('alias-input');
 
-    const match = (title.includes(entry) || description.includes(entry)) ? true : false;
-
-    return match;
-}
-
-function checkIfFiltered(taskCard) {
-    const filterPrioritySelect = document.getElementById('filter-priority-select');
-    const filterStatusSelect = document.getElementById('filter-status-select');
-
-    let selectedPriorities = Array.from(filterPrioritySelect.selectedOptions)
-    .map(option => option.value)
-    .filter(option => option !== 'any');
-
-    if (selectedPriorities.length === 0) selectedPriorities = ['low', 'medium', 'high'];
-
-    let selectedStatuses = Array.from(filterStatusSelect.selectedOptions)
-    .map(option => option.value)
-    .filter(option => option !== 'any');
-
-    if (selectedStatuses.length === 0) selectedStatuses = ['todo', 'inprogress', 'completed'];
-
-    const status = taskCard.getElementsByClassName('status-text')[0].innerHTML.toLowerCase().replace(/\s/g, '');
-    const priority = taskCard.getElementsByClassName('priority-text')[0].innerHTML.toLowerCase().replace(/\s/g, '').replace('priority', '');
-
-    const match = selectedPriorities.includes(priority) && selectedStatuses.includes(status);
-    return match;
-}
-
-function nextSortingType() {
-    const currentIndex = sortingTypes.indexOf(currentSortingType);
-    
-    const newIndex = (currentIndex + 1 >= sortingTypes.length) ? 0 : currentIndex + 1;
-
-    currentSortingType = sortingTypes[newIndex];
-}
-
-function sort(type, reversed) {
-    const tasks = document.getElementById('tasks');
-    const items = Array.from(document.getElementsByClassName('task-card'));
-
-    if (type == 'priority') {
-        items.sort((a, b) => {
-            // Sort by priority
-            const priorityA = a.querySelector('#priority').innerHTML.toLowerCase().split(" ")[0];
-            const priorityB = b.querySelector('#priority').innerHTML.toLowerCase().split(" ")[0];
-
-            return priorityWeights[priorityB] - priorityWeights[priorityA];
-        });
-    } else if (type == 'status') {
-        items.sort((a, b) => {
-            // Sort by status
-            const statusA = a.querySelector('#status').innerHTML.toLowerCase();
-            const statusB = b.querySelector('#status').innerHTML.toLowerCase();
-
-            return statusWeights[statusA] - statusWeights[statusB];
-        });
-    } else {
-        // Sort by name
-        items.sort((a, b) => {
-            const titleA = a.querySelector('#title').innerHTML;
-            const titleB = b.querySelector('#title').innerHTML;
-
-            return titleA.localeCompare(titleB);
-        });
+    switch (page) {
+        case 3:
+            page3.style.left = "0%";
+            page2.style.left = "-100%";
+            page1.style.left = "-200%";
+            buttonLeft.disabled = false;
+            buttonLeft.classList.remove('btn-disabled');
+            buttonRight.disabled = true;
+            buttonRight.classList.add('btn-disabled');
+            return
+        case 2:
+            page3.style.left = "100%";
+            page2.style.left = "0%";
+            page1.style.left = "-100%";
+            buttonLeft.disabled = false;
+            buttonLeft.classList.remove('btn-disabled');
+            if (aliasInput.value) {
+                buttonRight.disabled = false;
+                buttonRight.classList.remove('btn-disabled');
+            } else {
+                buttonRight.disabled = true;
+                buttonRight.classList.add('btn-disabled');
+            }
+            return
+        default:  // Page 1
+            page3.style.left = "200%";
+            page2.style.left = "100%";
+            page1.style.left = "0%";
+            buttonLeft.disabled = true;
+            buttonLeft.classList.add('btn-disabled');
+            try {
+                new URL(urlInput.value);
+                buttonRight.disabled = false;
+                buttonRight.classList.remove('btn-disabled');
+            } catch (error) {
+                buttonRight.disabled = true;
+                buttonRight.classList.add('btn-disabled');
+            }
     }
-
-    if (reversed) {
-        items.reverse();
-    }
-
-    tasks.innerHTML = '';
-    items.forEach(item => tasks.appendChild(item));
 }
 
-function updateTaskList() {
-    const allTaskCards = document.getElementsByClassName('task-card');
-
-    let allHidden = true;
-
-    Array.from(allTaskCards).forEach((taskCard) => {
-        const matchesSearch = checkIfSearched(taskCard);
-        const matchesFilter = checkIfFiltered(taskCard);
-        taskCard.style.display = (matchesSearch && matchesFilter) ? '' : 'none';
-        
-        if (allHidden) allHidden = taskCard.style.display == '' ? false : true;
-    });
-
-    if (allTaskCards.length > 0) {
-        if (allHidden) document.getElementById('no-tasks-found').hidden = false;
-        else document.getElementById('no-tasks-found').hidden = true;
-    }
-    
-}
-
-function setPopups(visibleOverlayId) {
-    const overlays = document.querySelectorAll('.overlay');
-    overlays.forEach(overlay => overlay.classList.add('hidden'));
-
-    if (visibleOverlayId) {
-        const overlay = document.getElementById(visibleOverlayId);
-        overlay.classList.remove('hidden');
-    }
+function shortenURL() {
+    // TODO: Add logic that posts link to server.
+    // TODO: Add on error switch to that page and send popup.
+    // TODO: Add logic that renders third page and switches to it.
+    // TODO: Make all buttons disabled after switching.
+    // TODO: Reenable buttons on error.
 }
 
 addEventListener('DOMContentLoaded', event => {
-    const taskCards = document.getElementsByClassName('task-card');
+    setTimeout(() => {
+        // "Preload" page to ensure smooth transition
+        switchToPage(2);
+        switchToPage(1);
+        document.querySelectorAll('.container-page').forEach(p => p.style.transition = 'all 0.5s');
+    }, 50);
+    const currentUrlContainers = document.getElementsByClassName('current-url');
     
-    for (const taskCard of taskCards) {
-        // Task Buttons
-        const taskButtons = taskCard.getElementsByClassName('task-buttons')[0].getElementsByClassName('task-button');
+    Array.from(currentUrlContainers).forEach(element => {
+        element.innerHTML = document.location;
+    });
 
-        for (const button of taskButtons) {
-            const taskId = button.id;
+    // Button pages
+    const buttonRight = document.getElementById('btn-right');
+    const buttonLeft = document.getElementById('btn-left');
 
-            if (button.classList.contains('edit-button')) {
-                button.addEventListener('click', (event) => editTask(Number(taskId)));
-            }
-
-            if (button.classList.contains('delete-button')) {
-                button.addEventListener('click', (event) => deleteTask(Number(taskId)));
-            }
+    function nextPage() {
+        currentPage += 1;
+        if (currentPage > 3) {
+            currentPage = 3;
+        } else if (currentPage === 3) {
+            buttonRight.disabled = true;
+            buttonLeft.disabled = true;
+            shortenURL();
+            return
         }
-
-        // Task
-        const task = taskCard.getElementsByClassName('task')[0];
-
-        const taskId = task.id;
-        const status = task.getElementsByClassName('status-text')[0].innerHTML.toLowerCase();
-
-        allTaskButtons.set(Number(taskId), {taskCard: taskCard, task: task, status: status});
-    }
-    
-
-    // Search
-
-    const searchBox = document.getElementById('task-search-box');
-
-    searchBox.addEventListener('input', updateTaskList);
-
-
-    // Filter
-
-    const applyFilterButton = document.getElementById('apply-filter');
-
-    applyFilterButton.addEventListener('click', event => {
-        updateTaskList();
-        setPopups(null);
-        showMessage(`Successfully applied filter.`, 'success', 2);
-    });
-
-    const filterButton = document.getElementById('filter-button');
-    filterButton.addEventListener('click', event => {
-        setPopups('overlay-filter');
-    });
-
-    const filterPrioritySelect = document.getElementById('filter-priority-select');
-    const filterStatusSelect = document.getElementById('filter-status-select');
-
-    for (const select of [filterPrioritySelect, filterStatusSelect]) {
-        // Testing
-        select.addEventListener('mousedown', event => {
-            event.preventDefault();
-            const option = event.target;
-            if (option.tagName.toLowerCase() === 'option') {
-                option.selected = !option.selected;
-
-                if (option.value === 'any' && option.selected) {
-                    Array.from(select.options).forEach(opt => {
-                        if (opt.value !== 'any') opt.selected = false;
-                    });
-                }
-
-                if (option.value !== 'any' && option.selected) {
-                    const allOption = select.querySelector('option[value="any"]');
-                    allOption.selected = false;
-                }
-            }
-        });
+        switchToPage(currentPage);
     }
 
-    // Add new task button
-    const addNewTaskButton = document.getElementById('add-task-button');
+    buttonRight.addEventListener('click', event => nextPage());
 
-    addNewTaskButton.addEventListener('click', event => {
-        setPopups('overlay-new-task');
+    buttonLeft.addEventListener('click', event => {
+        currentPage -= 1;
+        if (currentPage < 1) {
+            currentPage = 1;
+        }
+        switchToPage(currentPage);
     });
 
+    // Page 1
+    const urlInput = document.getElementById('url-input');
 
-    // Add new task popup
-    const createNewTaskForm = document.getElementById('create-new-task-form');
+    urlInput.addEventListener('input', event => {
+        const value = urlInput.value;
+        try { 
+            new URL(value);
+            buttonLeft.disabled = true;
+            buttonLeft.classList.add('btn-disabled')
+            buttonRight.disabled = false;
+            buttonRight.classList.remove('btn-disabled')
+        }
+        catch (error) {
+            buttonLeft.disabled = true;
+            buttonLeft.classList.add('btn-disabled')
+            buttonRight.disabled = true;
+            buttonRight.classList.add('btn-disabled')
+        }
+    });
 
-    createNewTaskForm.addEventListener('submit', event => {
-        event.preventDefault();
+    urlInput.addEventListener('keyup', event => {
+        if (!(event.key == 'Enter')) return;
+        const value = urlInput.value;
+        try {
+            new URL(value);
+            nextPage();
+        } catch (error) {}
+    });
 
-        if (event.target.checkValidity()) {
-            const newTaskTitle = document.getElementById('create-task-title-input').value;
-            const newTaskDescription = document.getElementById('create-task-description-input').value;
-            const newTaskPriority = document.getElementById('create-task-priority-select').value;
-            const newTaskDueDate = document.getElementById('create-task-datetime-input').value;
+    // Page 2
+    const aliasInput = document.getElementById('alias-input');
 
-            fetch(`/api/v1/tasks/`, {
-                method: 'POST',
-                body: JSON.stringify({
-                    title: newTaskTitle,
-                    description: newTaskDescription,
-                    priority: newTaskPriority,
-                    due: new Date(newTaskDueDate).getTime() || null,
-                }),
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-            })
-            .then(response => {
-                if (!response.ok) {
-                    console.log('Failed to create new task.');
-                    return;
-                }
-
-                return response.json();
-            })
-            .then(data => {
-                console.log(data);
-                if (!data.success) {
-                    console.log('Failed to create new task.');
-                    showMessage('There was an error while creating the task. Please try again later or reload the page.', 'error', 5);
-                    console.log(data.error);
-                    return;
-                } else {
-                    window.location.reload();
-                }
-            });
-
+    aliasInput.addEventListener('input', event => {
+        const value = aliasInput.value;
+        if (value) {
+            buttonRight.disabled = false;
+            buttonRight.classList.remove('btn-disabled')
         } else {
-            createNewTaskForm.reportValidity();
+            buttonRight.disabled = true;
+            buttonRight.classList.add('btn-disabled')
         }
     });
 
-    const cancelAddNewTaskButton = document.getElementById('cancel-add-new-task-button');
-
-    cancelAddNewTaskButton.addEventListener('click', event => {
-        setPopups(null);
+    aliasInput.addEventListener('keyup', event => {
+        if (!(event.key == 'Enter')) return;
+        const value = aliasInput.value;
+        if (value) {
+            nextPage();
+        }
     });
-
-    // Sorting button
-    const sortingButton = document.getElementById('sort-button');
-    sortingButton.addEventListener('click', event => {
-        nextSortingType();
-        sort(currentSortingType, reversedSorting);
-        showMessage(`Now sorting by ${reversedSorting ? 'reversed ' : ''}${capitalize(currentSortingType)}`, 'success', 2);
-    });
-
-    const reverseButton = document.getElementById('reverse-button');
-    reverseButton.addEventListener('click', event => {
-        reversedSorting = !reversedSorting;
-        sort(currentSortingType, reversedSorting);
-        showMessage(`Now sorting by ${reversedSorting ? 'reversed ' : ''}${capitalize(currentSortingType)}`, 'success', 2);
-    });
-
-    sort('name');
 });
-
-async function editTask(taskId) {
-    const taskButton = allTaskButtons.get(Number(taskId));
-    const currentStatus = taskButton.status;
-
-    if (!currentStatus) {
-        console.log(`Failed to edit task with id ${taskId}.`);
-        return;
-    }
-
-    const index = statuses.indexOf(currentStatus);
-
-    let newIndex = index + 1;
-    if (index + 1 > 2) {
-        newIndex = 0;
-    }
-
-    const newStatus = statuses[newIndex];
-    
-    let response;
-    try {
-        response = await fetch(`/api/v1/tasks/${taskId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                'status': newStatus
-            }),
-        });
-    } catch (error) {
-        showMessage('There was an error while editing the task. Please try again later or reload the page.', 'error', 5);
-        console.log(`Failed to edit task with id ${taskId}.`);
-        console.log(error);
-        return;
-    }
-
-    if (!response.ok) {
-        showMessage('There was an error while editing the task. Please try again later or reload the page.', 'error', 5);
-        console.log(`Failed to edit task with id ${taskId}.`);
-        console.log(await response.json());
-        return;
-    }
-
-    const jsonResponse = await response.json();
-
-    if (!jsonResponse.success) {
-        showMessage('There was an error while editing the task. Please try again later or reload the page.', 'error', 5);
-        console.log(`Failed to edit task with id ${taskId}.`);
-        console.log(jsonResponse.message);
-        return;
-    }
-
-    // window.location.reload();
-
-    const newStatusRaw = newStatus.toLowerCase().replace(' ', '');
-    const task = taskButton.task;
-
-    // Set main card status style
-    Array.from(task.classList).forEach(className => {
-        if (className.startsWith('status-')) task.classList.remove(className);
-    });
-    task.classList.add(`status-${newStatusRaw}`);
-
-    // Set statusText style and text
-    const statusText = task.getElementsByClassName('status-text')[0];
-    statusText.classList.remove(statusText.classList[1]);
-    statusText.classList.add(`${newStatusRaw}-text`);
-    statusText.innerHTML = capitalize(newStatus);
-
-    taskButton.status = newStatus;
-
-    updateTaskList();
-}
-
-async function deleteTask(taskId) {
-    const taskButton = allTaskButtons.get(Number(taskId));
-    
-    let response;
-    try {
-        response = await fetch(`/api/v1/tasks/${taskId}`, {
-            method: 'DELETE',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-        });
-    } catch (error) {
-        console.log(`Failed to delete task with id ${taskId}.`);
-        showMessage('There was an error while deleting the task. Please try again later or reload the page.', 'error', 5);
-        console.log(error);
-        return;
-    }
-
-    if (!response.ok) {
-        console.log(`Failed to delete task with id ${taskId}.`);
-        showMessage('There was an error while deleting the task. Please try again later or reload the page.', 'error', 5);
-        console.log(await response.json());
-        return;
-    }
-
-    const jsonResponse = await response.json();
-
-    if (!jsonResponse.success) {
-        console.log(`Failed to delete task with id ${taskId}.`);
-        showMessage('There was an error while deleting the task. Please try again later or reload the page.', 'error', 5);
-        console.log(jsonResponse.message);
-        return;
-    }
-
-    // window.location.reload();
-
-    const task = taskButton.task;
-    
-    // Delete the card from the list and from the "cache"
-    task.parentElement.remove();
-
-    allTaskButtons.delete(Number(taskId));
-}

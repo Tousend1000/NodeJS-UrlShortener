@@ -5,7 +5,7 @@ import { addClick, getShortenedLinkByAlias } from "../services/dbService";
 const router: Router = Router();
 
 router.get('/', async (req: Request, res: Response): Promise<void> => {
-    // TODO: Add dashboard to create link
+    res.render('index')
 });
 
 router.get('/track/:code', async (req: Request, res: Response): Promise<void> => {
